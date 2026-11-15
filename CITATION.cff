@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use this code or the per-case results, please cite the article."
+title: "Small lesions and label protocols: what breaks glioma-trained segmentation on other brain tumours"
+authors:
+  - family-names: Bui
+    given-names: Thi-Cuc
+    affiliation: "Faculty of Electrical & Electronic Engineering, Phenikaa University, Hanoi, Vietnam"
+  - family-names: Nguyen
+    given-names: Van-Toi
+    affiliation: "Phenikaa University, Hanoi, Vietnam"
+type: software
+license: MIT
