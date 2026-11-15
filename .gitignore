@@ -6,5 +6,5 @@ __pycache__/
 *.pth
 nnunet_results/
 nnUNet_raw/
-nUNet_preprocessed/
+nnUNet_preprocessed/
 .ipynb_checkpoints/
