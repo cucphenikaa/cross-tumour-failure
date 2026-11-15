@@ -1,5 +1,11 @@
 # Small lesions and label protocols: what breaks glioma-trained segmentation on other brain tumours
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24237466.svg)](https://doi.org/10.5281/zenodo.24237466)
+
+## Archived release
+
+The public research materials are archived on Zenodo: [10.5281/zenodo.24237466](https://doi.org/10.5281/zenodo.24237466). For reproducible citation, use the DOI associated with the specific archived release.
+
 Supplementary material for the article *Small lesions and label protocols: what breaks glioma-trained segmentation on other brain tumours* (Bui & Nguyen, submitted to *Computerized Medical Imaging and Graphics*).
 
 A glioma-trained nnU-Net (BraTS 2023) loses 18 Dice points on meningioma and 28 on paediatric tumours, for different reasons: missed small, edema-free meningiomas, and a different annotation protocol for paediatric non-enhancing tumour. A phenotype-routed mixture-of-experts and small-lesion synthesis do not close the gap; fine-tuning with 10–100 real meningiomas does, without forgetting glioma.
