@@ -47,14 +47,25 @@ def subgroups(df: pd.DataFrame) -> dict[str, pd.Series]:
             "no edema & WT <= 5 mL": no_ed & small, "edema present": ~no_ed}
 
 
-def paired_stats(a: np.ndarray, b: np.ndarray, higher_better: bool) -> dict:
+def patient_id(case: str) -> str:
+    """BraTS-XXX-<patient>-<timepoint> -> patient id (GLI has repeated time points)."""
+    return case.rsplit("-", 1)[0]
+
+
+def paired_stats(a: np.ndarray, b: np.ndarray, higher_better: bool, groups: np.ndarray | None = None) -> dict:
+    """Mean paired difference with a cluster (patient-level) bootstrap CI and a Wilcoxon test on per-patient
+    mean differences; identical to the case-level versions when every patient contributes one case."""
     d = b - a
     rng = np.random.default_rng(SEED)
-    idx = rng.integers(0, len(d), size=(N_BOOT, len(d)))
-    boot = d[idx].mean(axis=1)
+    groups = np.arange(len(d)) if groups is None else groups
+    ug, inv = np.unique(groups, return_inverse=True)
+    sums, cnts = np.bincount(inv, d), np.bincount(inv)
+    idx = rng.integers(0, len(ug), size=(N_BOOT, len(ug)))
+    boot = sums[idx].sum(axis=1) / cnts[idx].sum(axis=1)
     lo, hi = np.percentile(boot, [2.5, 97.5])
+    dp = sums / cnts
     try:
-        p = wilcoxon(b, a, zero_method="wilcox").pvalue if np.any(d != 0) else 1.0
+        p = wilcoxon(dp, zero_method="wilcox").pvalue if np.any(dp != 0) else 1.0
     except ValueError:
         p = 1.0
     better = d > 0 if higher_better else d < 0
@@ -97,7 +108,8 @@ def main() -> None:
             if len(sub) < 5:
                 continue
             for met, hb in metrics:
-                s = paired_stats(sub[f"{met}_A"].to_numpy(float), sub[f"{met}_B"].to_numpy(float), hb)
+                s = paired_stats(sub[f"{met}_A"].to_numpy(float), sub[f"{met}_B"].to_numpy(float), hb,
+                                 sub["case"].map(patient_id).to_numpy())
                 rows.append({"cohort": cohort, "subgroup": sg, "metric": met, "n": len(sub),
                              "primary": (cohort, sg, met) in primary, **s})
     res = pd.DataFrame(rows)
